@@ -3,6 +3,7 @@ import io from '../../utils/socket-io-client';
 import { socketURL } from '../../configs/socket-config';
 import { events } from '../../events';
 import LoginForm from '../login-form';
+import ChatContainer from '../chat-container';
 
 class Layout extends Component {
 	state = {
@@ -35,10 +36,14 @@ class Layout extends Component {
 	};
 
 	render() {
-		const { socket } = this.state;
+		const { socket, user } = this.state;
 		return (
 			<div className='container'>
-				<LoginForm socket={socket} setUser={this.setUser} />
+				{user ? (
+					<ChatContainer socket={socket} user={user} logout={this.logout} />
+				) : (
+					<LoginForm socket={socket} setUser={this.setUser} />
+				)}
 			</div>
 		);
 	}
