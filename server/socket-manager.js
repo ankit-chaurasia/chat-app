@@ -8,6 +8,7 @@ const {
 	MESSAGE_RECEIVED,
 	MESSAGE_SENT,
 	TYPING,
+	PRIVATE_MESSAGE,
 } = require('./events');
 const { createUser, createMessage, createChat } = require('./factories');
 
@@ -40,17 +41,18 @@ module.exports = (socket) => {
 		if (isUser(nickname)) {
 			callback({ isUser: true, user: null });
 		} else {
-			callback({ isUser: false, user: createUser({ name: nickname }) });
+			callback({ isUser: false, user: createUser({ name: nickname, socketId: socket.id }) });
 		}
 	});
 
 	socket.on(USER_CONNECTED, (user) => {
+		user.socketId = socket.id;
 		addUser(user);
 		socket.user = user;
 		sendMsgToChatFromUser = sendMessageToChat(user.name);
 		sendTypingFromUser = sendTypingToChat(user.name);
 		io.emit(USER_CONNECTED, connectedUsers);
-		console.log(JSON.stringify(connectedUsers));
+		console.log(`connectedUsers: ${JSON.stringify(connectedUsers)}`);
 	});
 
 	socket.on('disconnect', () => {
@@ -76,5 +78,19 @@ module.exports = (socket) => {
 	socket.on(TYPING, ({ chatId, isTyping }) => {
 		console.log(`Typing: ${chatId}, ${isTyping}`);
 		sendTypingFromUser(chatId, isTyping);
+	});
+
+	socket.on(PRIVATE_MESSAGE, ({ receiver, sender, activeChat }) => {
+		console.log(`PRIVATE_MESSAGE:= receiver:${receiver}, sender:${sender}`);
+		if (connectedUsers.hasOwnProperty(receiver)) {
+			const receiverSocket = connectedUsers[receiver].socketId;
+			if (activeChat === null || communityChat.id === activeChat.id) {
+				const newChat = createChat({ name: `${receiver}&${sender}`, users: [receiver, sender] });
+				socket.to(receiverSocket).emit(PRIVATE_MESSAGE, newChat);
+				socket.emit(PRIVATE_MESSAGE, newChat);
+			} else {
+				socket.to(receiverSocket).emit(PRIVATE_MESSAGE, activeChat);
+			}
+		}
 	});
 };

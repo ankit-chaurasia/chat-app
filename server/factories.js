@@ -1,10 +1,15 @@
 const uuidv4 = require('uuid/v4');
 
-const getTime = (date) => `${date.getHours()}:${date.getMinutes().toString().slice(-2)}`;
+const getTime = (date) =>
+	`${date.getHours()}:${date
+		.getMinutes()
+		.toString()
+		.slice(-2)}`;
 
-const createUser = ({ name = '' } = {}) => ({
+const createUser = ({ name = '', socketId = null } = {}) => ({
 	id: uuidv4(),
 	name,
+	socketId,
 });
 
 const createMessage = ({ message = '', sender = '' } = {}) => ({
