@@ -5,8 +5,6 @@ import MessageInput from '../messages/message-input';
 import ChatHeading from './chat-heading';
 
 class ChatRoomContainer extends Component {
-	state = {};
-
 	sendMessage = (chatId, message) => {
 		const { socket } = this.props;
 		socket.emit(events.MESSAGE_SENT, { chatId, message });
