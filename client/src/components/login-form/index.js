@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { events } from '../../events';
+import { VERIFY_USER } from '../../events';
 
 class LoginForm extends Component {
 	state = {
@@ -26,7 +26,7 @@ class LoginForm extends Component {
 		e.preventDefault();
 		const { socket } = this.props;
 		const { nickname } = this.state;
-		socket.emit(events.VERIFY_USER, nickname, this.setUser);
+		socket.emit(VERIFY_USER, nickname, this.setUser);
 	};
 
 	handleOnChange = (e) => {

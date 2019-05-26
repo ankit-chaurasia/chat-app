@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import io from '../../utils/socket-io-client';
 import { socketURL } from '../../configs/socket-config';
-import { events } from '../../events';
+import { USER_CONNECTED, LOGOUT } from '../../events';
 import LoginForm from '../login-form';
 import ChatContainer from '../chat-container';
 
@@ -25,13 +25,13 @@ class Layout extends Component {
 
 	setUser = (user) => {
 		const { socket } = this.state;
-		socket.emit(events.USER_CONNECTED, user);
+		socket.emit(USER_CONNECTED, user);
 		this.setState(() => ({ user }));
 	};
 
 	logout = () => {
 		const { socket } = this.state;
-		socket.emit(events.LOGOUT);
+		socket.emit(LOGOUT);
 		this.setState(() => ({ user: null }));
 	};
 

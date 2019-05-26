@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { events } from '../../events';
+import { MESSAGE_SENT, TYPING } from '../../events';
 import Messages from '../messages';
 import MessageInput from '../messages/message-input';
 import ChatHeading from './chat-heading';
@@ -7,12 +7,12 @@ import ChatHeading from './chat-heading';
 class ChatRoomContainer extends Component {
 	sendMessage = (chatId, message) => {
 		const { socket } = this.props;
-		socket.emit(events.MESSAGE_SENT, { chatId, message });
+		socket.emit(MESSAGE_SENT, { chatId, message });
 	};
 
 	sendTyping = (chatId, isTyping) => {
 		const { socket } = this.props;
-		socket.emit(events.TYPING, { chatId, isTyping });
+		socket.emit(TYPING, { chatId, isTyping });
 	};
 
 	render() {
