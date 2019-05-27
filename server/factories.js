@@ -19,12 +19,16 @@ const createMessage = ({ message = '', sender = '' } = {}) => ({
 	sender,
 });
 
-const createChat = ({ messages = [], name = 'Commuinty', users = [] } = {}) => ({
+const createChatNameFromUsers = (users, excludeUser = '') =>
+	users.filter((u) => u != excludeUser).join(' & ') || 'Empty Users';
+
+const createChat = ({ messages = [], name = 'Commuinty', users = [], isCommunity = false } = {}) => ({
 	id: uuidv4(),
-	name,
+	name: isCommunity ? 'Commuinty' : createChatNameFromUsers(users),
 	messages,
 	users,
 	typingUsers: [],
+	isCommunity,
 });
 
-module.exports = { createUser, createMessage, createChat };
+module.exports = { createUser, createMessage, createChat, createChatNameFromUsers };

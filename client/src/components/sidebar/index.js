@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import { FaChevronDown, FaBars, FaSearch } from 'react-icons/fa';
-// import FAMenu from 'react-icons/lib/fa/list-ul';
 import { MdEject } from 'react-icons/md';
+import SidebarOptions from './sidebar-options';
+import { get, last, differenceBy } from 'lodash';
 
 export default class SideBar extends Component {
+	static type = {
+		CHATS: 'chats',
+		USERS: 'users',
+	};
+
 	state = {
 		receiver: '',
+		activeSideBar: SideBar.type.CHATS,
 	};
 
 	handleOnChange = (e) => {
@@ -21,8 +28,21 @@ export default class SideBar extends Component {
 		this.setState(() => ({ receiver: '' }));
 	};
 
+	createChatNameFromUsers = (users, excludeUser = '') =>
+		users.filter((u) => u !== excludeUser).join(' & ') || 'Empty Users';
+
+	addChatForUsers = (username) => {
+		this.props.onSendOpenPrivateMessage(username);
+		this.setActiveSideBar(SideBar.type.CHATS);
+	};
+
+	setActiveSideBar = (newSideBar) => {
+		this.setState(() => ({ activeSideBar: newSideBar }));
+	};
+
 	render() {
-		const { chats, activeChat, user, setActiveChat, logout } = this.props;
+		const { chats, activeChat, user, setActiveChat, logout, users } = this.props;
+		const { receiver, activeSideBar } = this.state;
 		return (
 			<div id='side-bar'>
 				<div className='heading'>
@@ -37,9 +57,27 @@ export default class SideBar extends Component {
 					<i className='search-icon'>
 						<FaSearch />
 					</i>
-					<input placeholder='Search' type='text' value={this.state.receiver} onChange={this.handleOnChange} />
+					<input placeholder='Search' type='text' value={receiver} onChange={this.handleOnChange} />
 					<div className='plus' />
 				</form>
+				<div className='side-bar-select'>
+					<div
+						className={`side-bar-select__option ${activeSideBar === SideBar.type.CHATS ? 'active' : ''}`}
+						onClick={() => {
+							this.setActiveSideBar(SideBar.type.CHATS);
+						}}
+					>
+						<span>Chats</span>
+					</div>
+					<div
+						className={`side-bar-select__option ${activeSideBar === SideBar.type.USERS ? 'active' : ''}`}
+						onClick={() => {
+							this.setActiveSideBar(SideBar.type.USERS);
+						}}
+					>
+						<span>Users</span>
+					</div>
+				</div>
 				<div
 					className='users'
 					ref='users'
@@ -47,34 +85,31 @@ export default class SideBar extends Component {
 						e.target === this.refs.user && setActiveChat(null);
 					}}
 				>
-					{chats.map((chat) => {
-						if (chat.name) {
-							const lastMessage = chat.messages[chat.messages.length - 1];
-							const chatSideName =
-								chat.users.find((name) => {
-									return name !== user.name;
-								}) || 'Community';
-							const classNames = activeChat && activeChat.id === chat.id ? 'active' : '';
-
-							return (
-								<div
-									key={chat.id}
-									className={`user ${classNames}`}
-									onClick={() => {
-										setActiveChat(chat);
-									}}
-								>
-									<div className='user-photo'>{chatSideName[0].toUpperCase()}</div>
-									<div className='user-info'>
-										<div className='name'>{chatSideName}</div>
-										{lastMessage && <div className='last-message'>{lastMessage.message}</div>}
-									</div>
-								</div>
-							);
-						}
-
-						return null;
-					})}
+					{activeSideBar === SideBar.type.CHATS
+						? chats.map((chat) =>
+								chat.name ? (
+									<SidebarOptions
+										key={chat.id}
+										name={chat.isCommunity ? chat.name : this.createChatNameFromUsers(chat.users, user.name)}
+										lastMessage={get(last(chat.messages), 'message', '')}
+										active={activeChat.id === chat.id}
+										onClick={() => {
+											this.props.setActiveChat(chat);
+										}}
+									/>
+								) : null,
+						  )
+						: differenceBy(users, [user], 'name').map((otherUser) => {
+								return (
+									<SidebarOptions
+										key={otherUser.id}
+										name={otherUser.name}
+										onClick={() => {
+											this.addChatForUsers(otherUser.name);
+										}}
+									/>
+								);
+						  })}
 				</div>
 				<div className='current-user'>
 					<span>{user.name}</span>

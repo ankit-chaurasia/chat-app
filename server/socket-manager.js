@@ -13,7 +13,7 @@ const {
 const { createUser, createMessage, createChat } = require('./factories');
 
 const connectedUsers = {};
-let communityChat = createChat();
+let communityChat = createChat({ isCommunity: true });
 
 const isUser = (nickname) => connectedUsers.hasOwnProperty(nickname);
 
