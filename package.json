@@ -1,0 +1,29 @@
+{
+	"name": "chat-app",
+	"version": "1.0.0",
+	"description": "A Chat App with Socket.io and ReactJS",
+	"main": "index.js",
+	"scripts": {
+		"client": "cd ./client && npm start",
+		"server": "cd ./server && nodemon index.js",
+		"start": "concurrently - kill-others \"npm run server\" \"npm run client\""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ankit-chaurasia/chat-app.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/ankit-chaurasia/chat-app/issues"
+	},
+	"homepage": "https://github.com/ankit-chaurasia/chat-app#readme",
+	"devDependencies": {
+		"concurrently": "4.1.0",
+		"nodemon": "1.19.1"
+	},
+	"dependencies": {
+		"socket.io": "2.2.0",
+		"uuid": "3.3.2"
+	}
+}
