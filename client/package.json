@@ -14,14 +14,14 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --verbose false",
+    "test:coverage": "npm test -- --coverage --watchAll=false",
     "eject": "react-scripts eject",
     "lint": "eslint src --fix"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
-      "pre-push": "npm run lint"
+      "pre-commit": "npm run lint"
     }
   },
   "browserslist": {
@@ -38,11 +38,14 @@
   },
   "devDependencies": {
     "cross-env": "5.2.0",
+    "enzyme": "3.9.0",
+    "enzyme-adapter-react-16": "1.13.2",
     "eslint-config-prettier": "4.3.0",
     "eslint-plugin-alint": "1.1.2",
     "eslint-plugin-class-property": "1.1.0",
     "eslint-plugin-prettier": "3.1.0",
     "husky": "2.3.0",
-    "prettier": "1.17.1"
+    "prettier": "1.17.1",
+    "react-test-renderer": "16.8.6"
   }
 }
